@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'favorites.dart';
-import 'settings.dart';
-import 'page2.dart';
-import 'page3.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'base_navigation.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,50 +9,35 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late String _url;
   late String _category;
-  final String _catApiURL = 'http://shibe.online/api/cats';
-  final String _dogApiURL = 'https://api.thedogapi.com/v1/images/search';
-
-  List<String> _favorites = [];
+  final List<String> _catImageURLs = [
+    'https://cdn.shibe.online/cats/7e788e792e7f0181a0d7716e2ffa0b5fc9ecfc0c.jpg',
+    'https://cdn.shibe.online/cats/a8da965d8118cbd9593ab30c5179cf275e11927e.jpg',
+    'https://cdn.shibe.online/cats/3da221a9bdc3269aaa40679131ffb0c75143214f.jpg',
+    'https://cdn.shibe.online/cats/cad2cfcc1c152c5911cd54ff745206c023401f71.jpg',
+    'https://cdn.shibe.online/cats/8027e8d04de58a4bcd31f7b3a159b63305e3e391.jpg',
+    'https://cdn.shibe.online/cats/6ae35b5dee035e016c8080405a9bb0902a40d582.jpg',
+  ];
+  int _catImageIndex = 0;
+  late BaseNavigation _baseNavigation;
 
   @override
   void initState() {
     super.initState();
-    _url =
-        'https://cdn.shibe.online/cats/7e788e792e7f0181a0d7716e2ffa0b5fc9ecfc0c.jpg';
+    _url = _catImageURLs[0];
     _category = 'cat';
+    _baseNavigation = BaseNavigation(context);
   }
 
   Future<void> makeRequest() async {
-    final String apiURL = _category == 'cat' ? _catApiURL : _dogApiURL;
-
-    try {
-      final response = await http.get(Uri.parse(apiURL));
-
-      if (response.statusCode == 200) {
-        // Assuming the API response is a JSON array of image URLs
-        final List<dynamic> data = jsonDecode(response.body);
-
-        if (data.isNotEmpty) {
-          setState(() {
-            _url = data[0]['url'];
-          });
-        }
-      } else {
-        // Handle the error
-        print('Failed to load data. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      // Handle exceptions
-      print('An error occurred: $e');
-    }
+    setState(() {
+      _url = _catImageURLs[_catImageIndex++ % _catImageURLs.length];
+    });
   }
 
   void changeCategory() {
     Future.microtask(() {
-      print(
-          'Changing category from $_category to ${_category == 'cat' ? 'dog' : 'cat'}');
       setState(() {
-        _category = _category == 'cat' ? 'dog' : 'cat';
+        _category = 'cat';
       });
       makeRequest();
     });
@@ -67,53 +47,9 @@ class _HomePageState extends State<HomePage> {
     // ... (same as your existing addToFavorites method)
   }
 
-  void showFavorites() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => FavoritesPage(favorites: _favorites),
-      ),
-    );
-  }
-
-  void showSettings() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => SettingsPage(categoryName: _category),
-      ),
-    );
-  }
-
-  void showHomePage() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => HomePage(),
-      ),
-    );
-  }
-
-  void showPage2() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => Page2(),
-      ),
-    );
-  }
-
-  void showPage3() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => Page3(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
-      ),
-      drawer: buildDrawer(),
+    return _baseNavigation.buildBaseNavigation(
       body: GestureDetector(
         onDoubleTap: addToFavorites,
         child: Container(
@@ -126,80 +62,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      backgroundColor: Colors.black,
-      floatingActionButton: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0),
-            child: FloatingActionButton(
-              heroTag: null,
-              child: Icon(Icons.repeat),
-              onPressed: changeCategory,
-            ),
-          )
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        onTap: (index) {
-          if (index == 0) {
-            showHomePage();
-          } else if (index == 1) {
-            showFavorites();
-          } else if (index == 2) {
-            showSettings();
-          }
-        },
-      ),
-    );
-  }
-
-  Drawer buildDrawer() {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 48, 77, 100),
-            ),
-            child: Text(
-              'PetPalette Menu',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
-          ),
-          ListTile(
-            title: Text('Homepage'),
-            onTap: showHomePage,
-          ),
-          ListTile(
-            title: Text('Page 2'),
-            onTap: showPage2,
-          ),
-          ListTile(
-            title: Text('Page 3'),
-            onTap: showPage3,
-          ),
-        ],
-      ),
+      onRefresh: changeCategory,
     );
   }
 }

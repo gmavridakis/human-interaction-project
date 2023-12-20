@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   Container(
                     child: Image.network(
-                      '/icons/animal_paw.png',
+                      'https://raw.githubusercontent.com/gmavridakis/human-interaction-project/main/web/icons/animal_paw.png',
                       width: 75, // Set the same width as the Container
                       height: 75, // Set the same height as the Container
                       fit: BoxFit

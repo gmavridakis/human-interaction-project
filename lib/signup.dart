@@ -51,7 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               margin: EdgeInsets.all(8),
               child: Container(
                 child: Image.network(
-                  '/icons/get-started.png',
+                  'https://raw.githubusercontent.com/gmavridakis/human-interaction-project/main/web/icons/get-started.png',
                   width: 75,
                   height: 75,
                   fit: BoxFit.contain,

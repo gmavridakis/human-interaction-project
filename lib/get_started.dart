@@ -24,7 +24,7 @@ class GetStarted extends StatelessWidget {
               margin: EdgeInsets.all(8), // Adjust margin as needed
               child: Container(
                 child: Image.network(
-                  '/icons/get-started.png',
+                  'https://raw.githubusercontent.com/gmavridakis/human-interaction-project/main/web/icons/get-started.png',
                   width: 75, // Set the same width as the Container
                   height: 75, // Set the same height as the Container
                   fit: BoxFit

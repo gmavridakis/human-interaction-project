@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'base_navigation.dart';
+import 'feedpage.dart';
+import 'upload_photo.dart';
 
 class RandomFactsPage extends StatefulWidget {
   @override
@@ -8,6 +8,10 @@ class RandomFactsPage extends StatefulWidget {
 }
 
 class _RandomFactsPageState extends State<RandomFactsPage> {
+  static const Color primaryColor = Color.fromRGBO(22, 128, 90, 1);
+  static const Color secondaryColor = Color.fromRGBO(0, 67, 112, 1);
+  static const Color backgroundColor = Colors.black;
+  static const Color textColor = Colors.white;
   late String _fact;
   final List<String> _factsList = [
     'Did you know that cats have magical whiskers that can sense invisible creatures?',
@@ -36,60 +40,161 @@ class _RandomFactsPageState extends State<RandomFactsPage> {
     'The mystical dance of a cat chasing its tail is a ritual to keep the balance of the magical forces around them.',
   ];
 
-  late BaseNavigation _baseNavigation;
+  bool _factVisible = true;
 
+  int counter = 0;
   @override
   void initState() {
     super.initState();
-    _fact = _factsList[0];
-    _baseNavigation = BaseNavigation(context);
+    _fact = _factsList[counter];
+  }
+
+  void updateFact() {
+    counter++;
+    if (counter > 23) {
+      counter = 0;
+    }
+    _fact = _factsList[counter];
   }
 
   Future<void> makeRequest() async {
     setState(() {
-      _fact = _factsList[_generateRandomIndex()];
+      updateFact();
     });
   }
 
-  int _generateRandomIndex() {
-    return Random().nextInt(_factsList.length);
+  void toggleFactVisibility() {
+    setState(() {
+      _factVisible = true; //!_factVisible;
+    });
+    if (_factVisible) updateFact();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _baseNavigation.buildBaseNavigation(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Random Facts',
+          style: TextStyle(
+            color: Color.fromRGBO(22, 128, 90, 1),
+          ),
+        ),
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(
+            color: Color.fromRGBO(
+                22, 128, 90, 1)), // #16805A // App bar background color
+      ),
       body: GestureDetector(
         onTap: makeRequest,
         child: Container(
           padding: EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
-            color: Colors.purple[100],
+            color: Colors.white,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                'Did you know?',
-                style: TextStyle(
+              AnimatedOpacity(
+                opacity: _factVisible ? 1.0 : 1.0,
+                duration: Duration(milliseconds: 500),
+                child: Text(
+                  'Did you know?',
+                  style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
-                    color: Colors.indigo),
+                    color: primaryColor,
+                  ),
+                ),
               ),
               SizedBox(height: 16.0),
-              Text(
-                _fact,
-                style: TextStyle(
+              AnimatedOpacity(
+                opacity: _factVisible ? 1.0 : 1.0,
+                duration: Duration(milliseconds: 500),
+                child: Text(
+                  _fact,
+                  style: TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
-                    color: Colors.indigo),
-                textAlign: TextAlign.center,
+                    color: primaryColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
+              SizedBox(height: 16.0),
             ],
           ),
         ),
       ),
-      onRefresh: makeRequest,
+      floatingActionButton: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0),
+            child: FloatingActionButton(
+              heroTag: null,
+              child: Icon(Icons.repeat),
+              onPressed: makeRequest,
+            ),
+          )
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Colors.white), // Icon color
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon:
+                Icon(Icons.camera_alt_sharp, color: Colors.white), // Icon color
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info_outline_rounded,
+                color: const Color(0xFF16805A)), // Icon color
+            label: '',
+          ),
+        ],
+        onTap: (index) {
+          if (index == 0) {
+            showFeed();
+          } else if (index == 1) {
+            uploadPhoto();
+          } else if (index == 2) {
+            showFacts();
+          }
+        },
+        backgroundColor: Colors.black,
+        selectedItemColor: Color(0xFF16805A),
+        unselectedItemColor: Colors.grey,
+      ),
+    );
+  }
+
+  void showFeed() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FeedPage(),
+      ),
+    );
+  }
+
+  void uploadPhoto() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => UploadPhotoPage(),
+      ),
+    );
+  }
+
+  void showFacts() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => RandomFactsPage(),
+      ),
     );
   }
 }

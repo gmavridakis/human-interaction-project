@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ntua_project/homepage.dart';
+import 'package:ntua_project/get_started.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +13,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pet Explorer',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+        scaffoldBackgroundColor: Colors.black,
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Welcome to Pet Explorer'),
@@ -35,20 +36,25 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
+          backgroundColor: Color.fromRGBO(22, 128, 90, 1),
+          title: Text(
+            widget.title,
+            style:
+                TextStyle(color: Colors.white), // Set the text color to white
+          ),
         ),
         body: Stack(
           children: [
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage('/icons/dog_intro.jpg'),
+                  image: NetworkImage(
+                      'https://raw.githubusercontent.com/gmavridakis/human-interaction-project/main/web/icons/dog_intro.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
               child: Container(
-                color: Color.fromARGB(255, 254, 254, 255).withOpacity(0.6),
+                color: Color.fromARGB(255, 189, 189, 189).withOpacity(0.6),
               ),
             ),
             Center(
@@ -89,12 +95,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) => GetStarted()),
                     );
                   },
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFF03A8F4)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Color.fromRGBO(22, 128, 90, 1)),
                     padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                       EdgeInsets.fromLTRB(57.58, 20, 57, 19),
                     ),
@@ -102,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(9999),
                         side: const BorderSide(
-                          color: Color(0xFF028FD1),
+                          color: Color.fromRGBO(22, 128, 90, 1),
                           width: 1,
                         ),
                       ),

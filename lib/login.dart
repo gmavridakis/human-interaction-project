@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
               String password = _passwordController.text.trim();
 
               // Check if email and password are 'test'
-              if (email == 'a' && password == 'a') {
+              if (email == 'email' && password == 'password') {
                 // Set the flag to show the spinner
                 setState(() {
                   _showSpinner = true;
